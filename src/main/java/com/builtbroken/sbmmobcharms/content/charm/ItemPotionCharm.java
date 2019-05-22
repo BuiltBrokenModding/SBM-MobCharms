@@ -2,8 +2,8 @@ package com.builtbroken.sbmmobcharms.content.charm;
 
 import java.util.List;
 
-import com.builtbroken.sbmmobcharms.MobCharms;
 import com.builtbroken.sbmmobcharms.lib.CharmType;
+import com.builtbroken.sbmmobcharms.lib.CharmUtils;
 import com.builtbroken.sbmmobcharms.lib.EffectContext;
 
 import net.minecraft.client.resources.I18n;
@@ -30,7 +30,7 @@ public class ItemPotionCharm extends ItemCharm
         {
             //set a random power if the stack doesn't have one or it has no power
             if(!stack.hasTagCompound() || stack.getTagCompound().getInteger("Power") == 0)
-                stack.setTagCompound(MobCharms.getRandomizedCharmTag(true, world.rand));
+                stack.setTagCompound(CharmUtils.getRandomizedCharmTag(true, world.rand));
 
             if(player == null || player instanceof EntityPlayer) //null is allowed
             {

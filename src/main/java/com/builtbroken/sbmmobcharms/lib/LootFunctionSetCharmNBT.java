@@ -2,8 +2,6 @@ package com.builtbroken.sbmmobcharms.lib;
 
 import java.util.Random;
 
-import com.builtbroken.sbmmobcharms.MobCharms;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.loot.LootContext;
@@ -25,7 +23,7 @@ public class LootFunctionSetCharmNBT extends LootFunction
     public ItemStack apply(ItemStack stack, Random rand, LootContext ctx)
     {
         NBTTagCompound stackTag = stack.getTagCompound();
-        NBTTagCompound randomizedTag = MobCharms.getRandomizedCharmTag(applyPotionType, rand);
+        NBTTagCompound randomizedTag = CharmUtils.getRandomizedCharmTag(applyPotionType, rand);
 
         if(stackTag == null)
             stackTag = randomizedTag.copy();

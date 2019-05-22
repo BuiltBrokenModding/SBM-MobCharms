@@ -1,7 +1,5 @@
 package com.builtbroken.sbmmobcharms;
 
-import java.util.Random;
-
 import com.builtbroken.sbmmobcharms.content.charm.BlockCharm;
 import com.builtbroken.sbmmobcharms.content.charm.ItemCharm;
 import com.builtbroken.sbmmobcharms.content.charm.ItemPotionCharm;
@@ -13,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootEntryItem;
@@ -26,7 +23,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -110,29 +106,5 @@ public class MobCharms
                 event.getTable().addPool(pool);
             }
         }
-    }
-
-    /**
-     * Creates an NBT that contains an integer (Power) for a charm's power and, if wanted, a potion id (Potion) for a potion charm.
-     * This tag can be used as a stack tag
-     * @param applyPotionType Whether or not to set a random potion id on the tag
-     * @param rand The random number generator
-     * @return An NBT that contains the applicable data
-     */
-    public static NBTTagCompound getRandomizedCharmTag(boolean applyPotionType, Random rand)
-    {
-        NBTTagCompound randomizedTag = new NBTTagCompound();
-
-        randomizedTag.setInteger("Power", rand.nextInt(MobCharmsConfig.maxCharmPower) + 1); //+1 to get a result from 1 to maxCharmPower (both inclusive)
-
-        if(applyPotionType)
-        {
-            int potionAmount = ForgeRegistries.POTIONS.getKeys().size();
-            String potion = ForgeRegistries.POTIONS.getKeys().toArray(new ResourceLocation[potionAmount])[rand.nextInt(potionAmount)].toString();
-
-            randomizedTag.setString("Potion", potion);
-        }
-
-        return randomizedTag;
     }
 }

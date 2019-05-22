@@ -1,14 +1,12 @@
 package com.builtbroken.sbmmobcharms;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.builtbroken.sbmmobcharms.content.charm.ItemCharm;
-import com.builtbroken.sbmmobcharms.content.charm.TileEntityCharm;
 import com.builtbroken.sbmmobcharms.lib.CharmEffects;
 import com.builtbroken.sbmmobcharms.lib.CharmType;
-import com.builtbroken.sbmmobcharms.lib.EffectContext;
+import com.builtbroken.sbmmobcharms.lib.CharmUtils;
 import com.builtbroken.sbmmobcharms.lib.EntityAIAffectedByFollowCharm;
 
 import baubles.api.BaubleType;
@@ -19,8 +17,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -40,74 +36,52 @@ public class MobCharmsEventHandler
     {
         if(MobCharmsConfig.enableBuffCharm)
         {
-            EntityLivingBase attacked = event.getEntityLiving();
-            Entity attacker = event.getSource().getTrueSource();
-
             //yes, if multiple buff charms are there, the damage will not be different than with just one. this is intended
             //loop through all players who have an active charm in their inventory
-            for(EntityPlayer player : CharmEffects.PLAYERS_WITH_CHARMS.keySet())
-            {
-                for(ItemStack stack : CharmEffects.PLAYERS_WITH_CHARMS.get(player).values())
-                {
-                    if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == CharmType.BUFF && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                    {
-                        List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange);
+            EntityLivingBase attacked = event.getEntityLiving();
+            Entity attacker = event.getSource().getTrueSource();
+            boolean buffedByCharmOnPlayer = CharmUtils.checkPlayersWithCharms(CharmType.BUFF, (player, affected) -> {
+                //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
+                    event.setAmount(event.getAmount() * 1.2F); //more damage
 
-                        //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
-                        if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
-                            event.setAmount(event.getAmount() * 1.2F); //more damage
+                if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
+                    event.setAmount(event.getAmount() * 0.8F); //reduce damage
 
-                        if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
-                            event.setAmount(event.getAmount() * 0.8F); //reduce damage
+                return true;
+            }, false);
 
-                        return; //don't try to find any other buff charms
-                    }
-                }
-            }
+            if(buffedByCharmOnPlayer)
+                return;
 
-            //loop through all charm tile entities
-            for(World world : CharmEffects.CHARM_TILES.keySet())
-            {
-                for(BlockPos pos : CharmEffects.CHARM_TILES.get(world).keySet())
-                {
-                    if(CharmEffects.CHARM_TILES.get(world).get(pos) == CharmType.BUFF)
-                    {
-                        List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange);
+            boolean buffedByCharmTile = CharmUtils.checkCharmTileEntities(CharmType.BUFF, affected -> {
+                //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
+                    event.setAmount(event.getAmount() * 1.2F); //more damage
 
-                        //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
-                        if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
-                            event.setAmount(event.getAmount() * 1.2F); //more damage
+                if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
+                    event.setAmount(event.getAmount() * 0.8F); //reduce damage
 
-                        if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
-                            event.setAmount(event.getAmount() * 0.8F); //reduce damage
+                return true;
+            }, false);
 
-                        return; //don't try to find any other buff charms
-                    }
-                }
-            }
+            if(buffedByCharmTile)
+                return;
 
-            //loop through all charm entity items
-            for(World world : CharmEffects.CHARM_ENTITIES.keySet())
-            {
-                for(EntityItem ei : CharmEffects.CHARM_ENTITIES.get(world).keySet())
-                {
-                    ItemStack stack = ei.getItem();
 
-                    if(CharmEffects.CHARM_ENTITIES.get(world).get(ei) == CharmType.BUFF && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                    {
-                        List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange);
+            boolean buffedByCharmEntityItem = CharmUtils.checkCharmTileEntities(CharmType.BUFF, affected -> {
+                //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
+                    event.setAmount(event.getAmount() * 1.2F); //more damage
 
-                        //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
-                        if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
-                            event.setAmount(event.getAmount() * 1.2F); //more damage
+                if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
+                    event.setAmount(event.getAmount() * 0.8F); //reduce damage
 
-                        if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
-                            event.setAmount(event.getAmount() * 0.8F); //reduce damage
+                return true;
+            }, false);
 
-                        return; //don't try to find any other buff charms
-                    }
-                }
-            }
+            if(buffedByCharmEntityItem)
+                return;
         }
     }
 
@@ -115,7 +89,7 @@ public class MobCharmsEventHandler
     public static void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
         if(event.getEntity() instanceof EntityLiving)
-            ((EntityLiving)event.getEntity()).tasks.addTask(0, new EntityAIAffectedByFollowCharm((EntityLiving)event.getEntity()));
+            ((EntityLiving)event.getEntity()).tasks.addTask(10, new EntityAIAffectedByFollowCharm((EntityLiving)event.getEntity()));
     }
 
     @SubscribeEvent

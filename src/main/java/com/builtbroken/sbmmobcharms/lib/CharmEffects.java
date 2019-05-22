@@ -30,7 +30,7 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enableAttackCharm)
         {
-            EntityPlayer closestPlayer = ctx.getPlayer() == null ? ctx.getWorld().getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(ctx.getPos()).grow(MobCharmsConfig.maxCharmRange)).get(0) : ctx.getPlayer();
+            EntityPlayer closestPlayer = ctx.getPlayer() == null ? CharmUtils.getClosestPlayer(ctx) : ctx.getPlayer();
 
             if(closestPlayer != null)
             {
@@ -47,7 +47,7 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enableAttackTargetCharm)
         {
-            EntityPlayer closestPlayer = ctx.getPlayer() == null ? ctx.getWorld().getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(ctx.getPos()).grow(MobCharmsConfig.maxCharmRange)).get(0) : ctx.getPlayer();
+            EntityPlayer closestPlayer = ctx.getPlayer() == null ? CharmUtils.getClosestPlayer(ctx) : ctx.getPlayer();
 
             if(closestPlayer != null)
             {
@@ -99,23 +99,18 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enablePushCharm)
         {
-            EntityPlayer closestPlayer = ctx.getPlayer() == null ? ctx.getWorld().getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(ctx.getPos()).grow(MobCharmsConfig.maxCharmRange)).get(0) : ctx.getPlayer();
-
-            if(closestPlayer != null)
+            for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
             {
-                for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
-                {
-                    BlockPos dir = closestPlayer.getPosition().subtract(entity.getPosition()); //get the direction the entity should be pushed towards
-                    //normalize
-                    double dist = dir.getDistance(0, 0, 0);
+                BlockPos dir = (ctx.getPlayer() == null ? ctx.getPos() : ctx.getPlayer().getPosition()).subtract(entity.getPosition()); //get the direction the entity should be pushed towards
+                //normalize
+                double dist = dir.getDistance(0, 0, 0);
 
-                    //move entity towards that direction, respecting +/-
-                    //extra - to push away instead of attract
-                    //* 0.04F to reduce the strength
-                    entity.motionX = dist * -Math.signum(dir.getX()) * 0.04F;
-                    entity.motionY = dist * -Math.signum(dir.getY()) * 0.04F;
-                    entity.motionZ = dist * -Math.signum(dir.getZ()) * 0.04F;
-                }
+                //move entity towards that direction, respecting +/-
+                //extra - to push away instead of attract
+                //* 0.04F to reduce the strength
+                entity.motionX = dist * -Math.signum(dir.getX()) * 0.04F;
+                entity.motionY = dist * -Math.signum(dir.getY()) * 0.04F;
+                entity.motionZ = dist * -Math.signum(dir.getZ()) * 0.04F;
             }
         }
     }

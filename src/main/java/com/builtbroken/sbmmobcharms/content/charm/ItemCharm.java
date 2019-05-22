@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.builtbroken.sbmmobcharms.MobCharms;
 import com.builtbroken.sbmmobcharms.lib.CharmType;
+import com.builtbroken.sbmmobcharms.lib.CharmUtils;
 import com.builtbroken.sbmmobcharms.lib.EffectContext;
 
 import baubles.api.BaubleType;
@@ -74,7 +75,7 @@ public class ItemCharm extends Item implements IBauble
         {
             //set a random power if the stack doesn't have one or it has no power
             if(!stack.hasTagCompound() || stack.getTagCompound().getInteger("Power") == 0)
-                stack.setTagCompound(MobCharms.getRandomizedCharmTag(false, world.rand));
+                stack.setTagCompound(CharmUtils.getRandomizedCharmTag(false, world.rand));
 
             if(player == null || player instanceof EntityPlayer) //null is allowed
                 type.apply(new EffectContext(world, pos, (EntityPlayer)player, null, stack.getTagCompound().getInteger("Power")));
