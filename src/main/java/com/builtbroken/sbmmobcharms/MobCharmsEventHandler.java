@@ -69,7 +69,6 @@ public class MobCharmsEventHandler
             if(buffedByCharmTile)
                 return;
 
-
             boolean buffedByCharmEntityItem = CharmUtils.checkCharmTileEntities(CharmType.BUFF, affected -> {
                 //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
                 if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))

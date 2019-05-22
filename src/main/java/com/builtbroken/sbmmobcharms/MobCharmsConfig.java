@@ -38,7 +38,7 @@ public class MobCharmsConfig
     @Comment("Defines in which loot tables the charms will spawn")
     public static String[] lootTables = {
             "minecraft:chests/desert_pyramid",
-            "chests/end_city_treasure",
+            "minecraft:chests/end_city_treasure",
             "minecraft:chests/stronghold_corridor",
             "minecraft:chests/simple_dungeon",
             "minecraft:chests/nether_bridge"
