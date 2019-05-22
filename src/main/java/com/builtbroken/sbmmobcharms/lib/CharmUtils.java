@@ -1,5 +1,6 @@
 package com.builtbroken.sbmmobcharms.lib;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiFunction;
@@ -58,6 +59,8 @@ public class CharmUtils
         return players.size() > 0 ? players.get(0) : null;
     }
 
+    //the next three methods use iterators to prevent ConcurrentModificationExceptions
+
     /**
      * Loops through all known charms that are in players' inventories and applies the given function for the first one of the given type that was found
      * @param type The type to check for
@@ -68,10 +71,14 @@ public class CharmUtils
     public static <T> T checkPlayersWithCharms(CharmType type, BiFunction<EntityPlayer,List<EntityLivingBase>,T> function, T defaultReturnValue)
     {
         //loop through all players who have an active charm in their inventory
-        for(EntityPlayer player : CharmEffects.PLAYERS_WITH_CHARMS.keySet())
+        for(Iterator<EntityPlayer> playerIterator = CharmEffects.PLAYERS_WITH_CHARMS.keySet().iterator(); playerIterator.hasNext();)
         {
-            for(ItemStack stack : CharmEffects.PLAYERS_WITH_CHARMS.get(player).values())
+            EntityPlayer player = playerIterator.next();
+
+            for(Iterator<ItemStack> stackIterator = CharmEffects.PLAYERS_WITH_CHARMS.get(player).values().iterator(); stackIterator.hasNext();)
             {
+                ItemStack stack = stackIterator.next();
+
                 //check if prerequisites are met
                 if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
                     return function.apply(player, CharmEffects.getAffectedEntities(new EffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
@@ -91,10 +98,14 @@ public class CharmUtils
     public static <T> T checkCharmTileEntities(CharmType type, Function<List<EntityLivingBase>,T> function, T defaultReturnValue)
     {
         //loop through all charm tile entities
-        for(World world : CharmEffects.CHARM_TILES.keySet())
+        for(Iterator<World> worldIterator = CharmEffects.CHARM_TILES.keySet().iterator(); worldIterator.hasNext();)
         {
-            for(BlockPos pos : CharmEffects.CHARM_TILES.get(world).keySet())
+            World world = worldIterator.next();
+
+            for(Iterator<BlockPos> posIterator = CharmEffects.CHARM_TILES.get(world).keySet().iterator(); posIterator.hasNext();)
             {
+                BlockPos pos = posIterator.next();
+
                 //check if prerequisites are met
                 if(CharmEffects.CHARM_TILES.get(world).get(pos) == type)
                     return function.apply(CharmEffects.getAffectedEntities(new EffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange));
@@ -114,10 +125,13 @@ public class CharmUtils
     public static <T> T checkCharmEntityItems(CharmType type, Function<List<EntityLivingBase>,T> function, T defaultReturnValue)
     {
         //loop through all charm entity items
-        for(World world : CharmEffects.CHARM_ENTITIES.keySet())
+        for(Iterator<World> worldIterator = CharmEffects.CHARM_TILES.keySet().iterator(); worldIterator.hasNext();)
         {
-            for(EntityItem ei : CharmEffects.CHARM_ENTITIES.get(world).keySet())
+            World world = worldIterator.next();
+
+            for(Iterator<EntityItem> eiIterator = CharmEffects.CHARM_ENTITIES.get(world).keySet().iterator(); eiIterator.hasNext();)
             {
+                EntityItem ei = eiIterator.next();
                 ItemStack stack = ei.getItem();
 
                 //check if prerequisites are met
