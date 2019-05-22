@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "charm_type=attack": { "model": "sbmmobcharms:charm_block" },
+        "charm_type=attack_target":  { "model": "sbmmobcharms:charm_block" },
+        "charm_type=buff":  { "model": "sbmmobcharms:charm_block" },
+        "charm_type=follow": { "model": "sbmmobcharms:charm_block" },
+        "charm_type=heal_friendly": { "model": "sbmmobcharms:charm_block" },
+        "charm_type=no_attack": { "model": "sbmmobcharms:charm_block"},
+        "charm_type=potion": { "model": "sbmmobcharms:charm_block" },
+        "charm_type=push": { "model": "sbmmobcharms:charm_block" }
+    }
+}

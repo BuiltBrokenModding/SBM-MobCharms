@@ -1,0 +1,16 @@
+[
+{
+  "modid": "sbmmobcharms",
+  "name": "[SBM] Mob Charms",
+  "description": "",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["bl4ckscor3"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

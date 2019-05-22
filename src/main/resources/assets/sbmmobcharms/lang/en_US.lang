@@ -1,0 +1,12 @@
+item.sbmmobcharms:no_attack_charm.name=Charm of No Attacking
+item.sbmmobcharms:follow_charm.name=Charm of Following
+item.sbmmobcharms:attack_charm.name=Charm of Attacking
+item.sbmmobcharms:push_charm.name=Charm of Pushing
+item.sbmmobcharms:heal_friendly_charm.name=Charm of Friendly Healing
+item.sbmmobcharms:attack_target_charm.name=Charm of Target Attacking
+item.sbmmobcharms:buff_charm.name=Charm of Buffing
+item.sbmmobcharms:potion_charm.name=Charm of Potion Effects
+tile.sbmmobcharms.charm_block.name=Charm Block
+sbmmobcharms.tooltip.power=Power: %s
+sbmmobcharms.tooltip.potion=Potion: %s
+itemGroup.sbmmobcharms_tab=[SBM] Mob Charms

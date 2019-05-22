@@ -1,0 +1,7 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "sbmmobcharms:items/charm_1",
+		"layer1": "sbmmobcharms:items/charm_2"
+	}
+}
