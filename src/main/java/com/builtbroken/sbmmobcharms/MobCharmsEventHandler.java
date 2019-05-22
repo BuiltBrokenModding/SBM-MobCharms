@@ -38,71 +38,74 @@ public class MobCharmsEventHandler
     @SubscribeEvent
     public static void onLivingAttack(LivingDamageEvent event) //handling for buff charm
     {
-        EntityLivingBase attacked = event.getEntityLiving();
-        Entity attacker = event.getSource().getTrueSource();
-
-        //yes, if multiple buff charms are there, the damage will not be different than with just one. this is intended
-        //loop through all players who have an active charm in their inventory
-        for(EntityPlayer player : CharmEffects.PLAYERS_WITH_CHARMS.keySet())
+        if(MobCharmsConfig.enableBuffCharm)
         {
-            for(ItemStack stack : CharmEffects.PLAYERS_WITH_CHARMS.get(player).values())
+            EntityLivingBase attacked = event.getEntityLiving();
+            Entity attacker = event.getSource().getTrueSource();
+
+            //yes, if multiple buff charms are there, the damage will not be different than with just one. this is intended
+            //loop through all players who have an active charm in their inventory
+            for(EntityPlayer player : CharmEffects.PLAYERS_WITH_CHARMS.keySet())
             {
-                if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == CharmType.FOLLOW && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
+                for(ItemStack stack : CharmEffects.PLAYERS_WITH_CHARMS.get(player).values())
                 {
-                    List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange);
+                    if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == CharmType.BUFF && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
+                    {
+                        List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange);
 
-                    //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
-                    if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
-                        event.setAmount(event.getAmount() * 1.2F); //more damage
+                        //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                        if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
+                            event.setAmount(event.getAmount() * 1.2F); //more damage
 
-                    if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
-                        event.setAmount(event.getAmount() * 0.8F); //reduce damage
+                        if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
+                            event.setAmount(event.getAmount() * 0.8F); //reduce damage
 
-                    return; //don't try to find any other buff charms
+                        return; //don't try to find any other buff charms
+                    }
                 }
             }
-        }
 
-        //loop through all charm tile entities
-        for(World world : CharmEffects.CHARM_TILES.keySet())
-        {
-            for(BlockPos pos : CharmEffects.CHARM_TILES.get(world).keySet())
+            //loop through all charm tile entities
+            for(World world : CharmEffects.CHARM_TILES.keySet())
             {
-                if(CharmEffects.CHARM_TILES.get(world).get(pos) == CharmType.FOLLOW)
+                for(BlockPos pos : CharmEffects.CHARM_TILES.get(world).keySet())
                 {
-                    List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange);
+                    if(CharmEffects.CHARM_TILES.get(world).get(pos) == CharmType.BUFF)
+                    {
+                        List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange);
 
-                    //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
-                    if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
-                        event.setAmount(event.getAmount() * 1.2F); //more damage
+                        //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                        if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
+                            event.setAmount(event.getAmount() * 1.2F); //more damage
 
-                    if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
-                        event.setAmount(event.getAmount() * 0.8F); //reduce damage
+                        if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
+                            event.setAmount(event.getAmount() * 0.8F); //reduce damage
 
-                    return; //don't try to find any other buff charms
+                        return; //don't try to find any other buff charms
+                    }
                 }
             }
-        }
 
-        //loop through all charm entity items
-        for(World world : CharmEffects.CHARM_ENTITIES.keySet())
-        {
-            for(EntityItem ei : CharmEffects.CHARM_ENTITIES.get(world).keySet())
+            //loop through all charm entity items
+            for(World world : CharmEffects.CHARM_ENTITIES.keySet())
             {
-                ItemStack stack = ei.getItem();
-
-                if(CharmEffects.CHARM_ENTITIES.get(world).get(ei) == CharmType.FOLLOW && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
+                for(EntityItem ei : CharmEffects.CHARM_ENTITIES.get(world).keySet())
                 {
-                    List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange);
+                    ItemStack stack = ei.getItem();
 
-                    //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
-                    if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
-                        event.setAmount(event.getAmount() * 1.2F); //more damage
+                    if(CharmEffects.CHARM_ENTITIES.get(world).get(ei) == CharmType.BUFF && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
+                    {
+                        List<EntityLivingBase> affected = CharmEffects.getAffectedEntities(new EffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange);
 
-                    if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
-                        event.setAmount(event.getAmount() * 0.8F); //reduce damage
+                        //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                        if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
+                            event.setAmount(event.getAmount() * 1.2F); //more damage
 
-                    return; //don't try to find any other buff charms
+                        if(affected.contains(attacked) && !(attacker instanceof EntityPlayer))
+                            event.setAmount(event.getAmount() * 0.8F); //reduce damage
+
+                        return; //don't try to find any other buff charms
+                    }
                 }
             }
         }
