@@ -31,6 +31,7 @@ public class ItemCharm extends Item implements IBauble
     public ItemCharm(CharmType type)
     {
         setCreativeTab(MobCharms.CREATIVE_TAB);
+        setMaxStackSize(1);
         this.type = type;
     }
 
