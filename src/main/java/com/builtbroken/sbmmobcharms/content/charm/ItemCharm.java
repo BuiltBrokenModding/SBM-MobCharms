@@ -24,7 +24,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
+@Optional.Interface(iface="baubles.api.IBauble", modid="baubles")
 public class ItemCharm extends Item implements IBauble
 {
     private final CharmType type;
@@ -57,6 +59,7 @@ public class ItemCharm extends Item implements IBauble
     }
 
     @Override
+    @Optional.Method(modid="baubles")
     public void onWornTick(ItemStack stack, EntityLivingBase player)
     {
         tryApplyEffect(stack, player.world, player.getPosition(), player);
@@ -111,6 +114,7 @@ public class ItemCharm extends Item implements IBauble
     }
 
     @Override
+    @Optional.Method(modid="baubles")
     public BaubleType getBaubleType(ItemStack stack)
     {
         return BaubleType.CHARM;

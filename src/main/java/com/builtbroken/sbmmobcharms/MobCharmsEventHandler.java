@@ -21,6 +21,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
@@ -113,12 +114,15 @@ public class MobCharmsEventHandler
                     activeCharms.remove(i);
             }
 
-            ItemStack stack = BaublesApi.getBaublesHandler(player).getStackInSlot(BaubleType.CHARM.getValidSlots()[0]); //only one charm slot
+            if(Loader.isModLoaded("baubles"))
+            {
+                ItemStack stack = BaublesApi.getBaublesHandler(player).getStackInSlot(BaubleType.CHARM.getValidSlots()[0]); //only one charm slot
 
-            if(stack.getItem() instanceof ItemCharm)
-                activeCharms.put(10, stack); //10 is defined as the baubles slot here since 0-9 are already from the hotbar
-            else
-                activeCharms.remove(10);
+                if(stack.getItem() instanceof ItemCharm)
+                    activeCharms.put(10, stack); //10 is defined as the baubles slot here since 0-9 are already from the hotbar
+                else
+                    activeCharms.remove(10);
+            }
 
             CharmEffects.PLAYERS_WITH_CHARMS.put(player, activeCharms);
         }
