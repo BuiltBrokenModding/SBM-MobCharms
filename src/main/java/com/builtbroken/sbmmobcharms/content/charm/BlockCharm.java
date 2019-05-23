@@ -13,6 +13,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -59,7 +60,12 @@ public class BlockCharm extends Block
                 ((TileEntityCharm)world.getTileEntity(pos)).setPower(stack.getTagCompound().getInteger("Power"));
 
             if(!player.isCreative()) //only remove item if player is not in creative
-                stack.setCount(0);
+            {
+                if(event.getHand() == EnumHand.OFF_HAND)
+                    player.inventory.offHandInventory.set(0, ItemStack.EMPTY);
+                else
+                    player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
+            }
         }
     }
 
