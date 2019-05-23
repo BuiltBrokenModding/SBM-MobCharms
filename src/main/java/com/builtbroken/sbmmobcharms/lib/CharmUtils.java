@@ -75,13 +75,16 @@ public class CharmUtils
         {
             EntityPlayer player = playerIterator.next();
 
-            for(Iterator<ItemStack> stackIterator = CharmEffects.PLAYERS_WITH_CHARMS.get(player).values().iterator(); stackIterator.hasNext();)
+            if(CharmEffects.PLAYERS_WITH_CHARMS.get(player) != null)
             {
-                ItemStack stack = stackIterator.next();
+                for(Iterator<ItemStack> stackIterator = CharmEffects.PLAYERS_WITH_CHARMS.get(player).values().iterator(); stackIterator.hasNext();)
+                {
+                    ItemStack stack = stackIterator.next();
 
-                //check if prerequisites are met
-                if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                    return function.apply(player, CharmEffects.getAffectedEntities(new EffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                    //check if prerequisites are met
+                    if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
+                        return function.apply(player, CharmEffects.getAffectedEntities(new EffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                }
             }
         }
 
@@ -102,13 +105,16 @@ public class CharmUtils
         {
             World world = worldIterator.next();
 
-            for(Iterator<BlockPos> posIterator = CharmEffects.CHARM_TILES.get(world).keySet().iterator(); posIterator.hasNext();)
+            if(CharmEffects.CHARM_TILES.get(world) != null)
             {
-                BlockPos pos = posIterator.next();
+                for(Iterator<BlockPos> posIterator = CharmEffects.CHARM_TILES.get(world).keySet().iterator(); posIterator.hasNext();)
+                {
+                    BlockPos pos = posIterator.next();
 
-                //check if prerequisites are met
-                if(CharmEffects.CHARM_TILES.get(world).get(pos) == type)
-                    return function.apply(CharmEffects.getAffectedEntities(new EffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange));
+                    //check if prerequisites are met
+                    if(CharmEffects.CHARM_TILES.get(world).get(pos) == type)
+                        return function.apply(CharmEffects.getAffectedEntities(new EffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange));
+                }
             }
         }
 
@@ -129,14 +135,17 @@ public class CharmUtils
         {
             World world = worldIterator.next();
 
-            for(Iterator<EntityItem> eiIterator = CharmEffects.CHARM_ENTITIES.get(world).keySet().iterator(); eiIterator.hasNext();)
+            if(CharmEffects.CHARM_ENTITIES.get(world) != null)
             {
-                EntityItem ei = eiIterator.next();
-                ItemStack stack = ei.getItem();
+                for(Iterator<EntityItem> eiIterator = CharmEffects.CHARM_ENTITIES.get(world).keySet().iterator(); eiIterator.hasNext();)
+                {
+                    EntityItem ei = eiIterator.next();
+                    ItemStack stack = ei.getItem();
 
-                //check if prerequisites are met
-                if(CharmEffects.CHARM_ENTITIES.get(world).get(ei) == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                    return function.apply(CharmEffects.getAffectedEntities(new EffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                    //check if prerequisites are met
+                    if(CharmEffects.CHARM_ENTITIES.get(world).get(ei) == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
+                        return function.apply(CharmEffects.getAffectedEntities(new EffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                }
             }
         }
 
