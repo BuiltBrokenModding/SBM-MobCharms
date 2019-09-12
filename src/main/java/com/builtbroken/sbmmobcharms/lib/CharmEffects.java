@@ -26,7 +26,7 @@ public class CharmEffects
     public static final Map<World,Map<BlockPos,CharmType>> CHARM_TILES = new HashMap<>();
     public static final Map<World,Map<EntityItem,CharmType>> CHARM_ENTITIES = new HashMap<>();
 
-    public static void applyAttackEffect(EffectContext ctx)
+    public static void applyAttackEffect(CharmEffectContext ctx)
     {
         if(MobCharmsConfig.enableAttackCharm)
         {
@@ -43,7 +43,7 @@ public class CharmEffects
         }
     }
 
-    public static void applyAttackTargetEffect(EffectContext ctx)
+    public static void applyAttackTargetEffect(CharmEffectContext ctx)
     {
         if(MobCharmsConfig.enableAttackTargetCharm)
         {
@@ -60,7 +60,7 @@ public class CharmEffects
         }
     }
 
-    public static void applyHealFriendlyEffect(EffectContext ctx)
+    public static void applyHealFriendlyEffect(CharmEffectContext ctx)
     {
         if(MobCharmsConfig.enableHealFriendlyCharm)
         {
@@ -72,7 +72,7 @@ public class CharmEffects
         }
     }
 
-    public static void applyNoAttackEffect(EffectContext ctx)
+    public static void applyNoAttackEffect(CharmEffectContext ctx)
     {
         if(MobCharmsConfig.enableNoAttackCharm)
         {
@@ -84,7 +84,7 @@ public class CharmEffects
         }
     }
 
-    public static void applyPotionEffect(EffectContext ctx)
+    public static void applyPotionEffect(CharmEffectContext ctx)
     {
         if(MobCharmsConfig.enablePotionCharm && ctx.getPotion() != null)
         {
@@ -95,7 +95,7 @@ public class CharmEffects
         }
     }
 
-    public static void applyPushEffect(EffectContext ctx)
+    public static void applyPushEffect(CharmEffectContext ctx)
     {
         if(MobCharmsConfig.enablePushCharm)
         {
@@ -121,7 +121,7 @@ public class CharmEffects
      * @param range The range to affect. Starts with the maximum range, then descreases it by one if there are too many mobs in the area. Stops if the range is <= 0
      * @return The entities that will be affected when applying the effect
      */
-    public static List<EntityLivingBase> getAffectedEntities(EffectContext ctx, int range)
+    public static List<EntityLivingBase> getAffectedEntities(CharmEffectContext ctx, int range)
     {
         if(range <= 0 || ctx == null || ctx.getWorld() == null || ctx.getPos() == null)
             return new ArrayList<>();

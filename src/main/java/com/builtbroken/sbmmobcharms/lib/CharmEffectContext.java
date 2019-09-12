@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 /**
  * Provides context when applying an effect
  */
-public class EffectContext
+public class CharmEffectContext
 {
     private final World world;
     private final BlockPos pos;
@@ -25,7 +25,7 @@ public class EffectContext
      * @param potion The potion, may be null
      * @param power The power of the effect in blocks
      */
-    public EffectContext(World world, BlockPos pos, EntityPlayer player, Potion potion, int power)
+    public CharmEffectContext(World world, BlockPos pos, EntityPlayer player, Potion potion, int power)
     {
         this.world = world;
         this.pos = pos;

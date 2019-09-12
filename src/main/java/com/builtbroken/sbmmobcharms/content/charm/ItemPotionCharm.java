@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.builtbroken.sbmmobcharms.lib.CharmType;
 import com.builtbroken.sbmmobcharms.lib.CharmUtils;
-import com.builtbroken.sbmmobcharms.lib.EffectContext;
+import com.builtbroken.sbmmobcharms.lib.CharmEffectContext;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -37,7 +37,7 @@ public class ItemPotionCharm extends ItemCharm
                 String potionId = stack.getTagCompound().getString("Potion");
 
                 if(potionId != null)
-                    getCharmType().apply(new EffectContext(world, pos, (EntityPlayer)player, ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionId)), stack.getTagCompound().getInteger("Power")));
+                    getCharmType().apply(new CharmEffectContext(world, pos, (EntityPlayer)player, ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionId)), stack.getTagCompound().getInteger("Power")));
             }
         }
     }

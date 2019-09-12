@@ -5,7 +5,7 @@ import java.util.List;
 import com.builtbroken.sbmmobcharms.MobCharms;
 import com.builtbroken.sbmmobcharms.lib.CharmType;
 import com.builtbroken.sbmmobcharms.lib.CharmUtils;
-import com.builtbroken.sbmmobcharms.lib.EffectContext;
+import com.builtbroken.sbmmobcharms.lib.CharmEffectContext;
 
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
@@ -81,7 +81,7 @@ public class ItemCharm extends Item implements IBauble
                 stack.setTagCompound(CharmUtils.getRandomizedCharmTag(false, world.rand));
 
             if(player == null || player instanceof EntityPlayer) //null is allowed
-                type.apply(new EffectContext(world, pos, (EntityPlayer)player, null, stack.getTagCompound().getInteger("Power")));
+                type.apply(new CharmEffectContext(world, pos, (EntityPlayer)player, null, stack.getTagCompound().getInteger("Power")));
         }
     }
 

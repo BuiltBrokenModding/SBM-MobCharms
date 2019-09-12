@@ -22,13 +22,13 @@ public enum CharmType implements IStringSerializable
     PUSH(0xFF6600, CharmEffects::applyPushEffect);
 
     public final int color;
-    private final Consumer<EffectContext> effectApplier;
+    private final Consumer<CharmEffectContext> effectApplier;
 
     /**
      * @param color The color of the charm item
      * @param effectApplier The consumer which applies the effect of the charm in a world at a position
      */
-    CharmType(int color, Consumer<EffectContext> effectApplier)
+    CharmType(int color, Consumer<CharmEffectContext> effectApplier)
     {
         this.color = color;
         this.effectApplier = effectApplier;
@@ -38,7 +38,7 @@ public enum CharmType implements IStringSerializable
      * Applies this charm type's effect with in the given world at the given position
      * @param ctx The context while applying the effect
      */
-    public void apply(EffectContext ctx)
+    public void apply(CharmEffectContext ctx)
     {
         effectApplier.accept(ctx);
     }

@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.builtbroken.sbmmobcharms.lib.CharmEffects;
 import com.builtbroken.sbmmobcharms.lib.CharmType;
-import com.builtbroken.sbmmobcharms.lib.EffectContext;
+import com.builtbroken.sbmmobcharms.lib.CharmEffectContext;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -39,7 +39,7 @@ public class TileEntityCharm extends TileEntity implements ITickable
     public void update()
     {
         if(!world.isRemote && charmType != null)
-            charmType.apply(new EffectContext(world, pos, null, getPotion(), power));
+            charmType.apply(new CharmEffectContext(world, pos, null, getPotion(), power));
     }
 
     @Override

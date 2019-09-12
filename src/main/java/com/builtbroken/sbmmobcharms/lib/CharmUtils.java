@@ -52,7 +52,7 @@ public class CharmUtils
      * @param ctx The effect context
      * @return The closest player, null if no player has been found
      */
-    public static EntityPlayer getClosestPlayer(EffectContext ctx)
+    public static EntityPlayer getClosestPlayer(CharmEffectContext ctx)
     {
         List<EntityPlayer> players = ctx.getWorld().getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(ctx.getPos()).grow(MobCharmsConfig.maxCharmRange));
 
@@ -83,7 +83,7 @@ public class CharmUtils
 
                     //check if prerequisites are met
                     if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                        return function.apply(player, CharmEffects.getAffectedEntities(new EffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                        return function.apply(player, CharmEffects.getAffectedEntities(new CharmEffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
                 }
             }
         }
@@ -113,7 +113,7 @@ public class CharmUtils
 
                     //check if prerequisites are met
                     if(CharmEffects.CHARM_TILES.get(world).get(pos) == type)
-                        return function.apply(CharmEffects.getAffectedEntities(new EffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange));
+                        return function.apply(CharmEffects.getAffectedEntities(new CharmEffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange));
                 }
             }
         }
@@ -144,7 +144,7 @@ public class CharmUtils
 
                     //check if prerequisites are met
                     if(CharmEffects.CHARM_ENTITIES.get(world).get(ei) == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                        return function.apply(CharmEffects.getAffectedEntities(new EffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                        return function.apply(CharmEffects.getAffectedEntities(new CharmEffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
                 }
             }
         }
