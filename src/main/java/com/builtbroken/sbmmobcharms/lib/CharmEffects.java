@@ -1,22 +1,18 @@
 package com.builtbroken.sbmmobcharms.lib;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.builtbroken.sbmmobcharms.MobCharmsConfig;
 
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -30,16 +26,10 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enableAttackCharm)
         {
-            EntityPlayer closestPlayer = ctx.getPlayer() == null ? CharmUtils.getClosestPlayer(ctx) : ctx.getPlayer();
-
-            if(closestPlayer != null)
-            {
-                for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
-                {
-                    if(entity instanceof EntityLiving)
-                        ((EntityLiving)entity).setAttackTarget(closestPlayer);
-                }
-            }
+            CharmUtils.tryApplyEffectToEntitiesWithClosestPlayer(ctx, (entity, closestPlayer) -> {
+                if(entity instanceof EntityLiving)
+                    ((EntityLiving)entity).setAttackTarget(closestPlayer);
+            });
         }
     }
 
@@ -47,16 +37,10 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enableAttackTargetCharm)
         {
-            EntityPlayer closestPlayer = ctx.getPlayer() == null ? CharmUtils.getClosestPlayer(ctx) : ctx.getPlayer();
-
-            if(closestPlayer != null)
-            {
-                for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
-                {
-                    if(entity instanceof EntityLiving)
-                        ((EntityLiving)entity).setAttackTarget(closestPlayer.getLastAttackedEntity());
-                }
-            }
+            CharmUtils.tryApplyEffectToEntitiesWithClosestPlayer(ctx, (entity, closestPlayer) -> {
+                if(entity instanceof EntityLiving)
+                    ((EntityLiving)entity).setAttackTarget(closestPlayer.getLastAttackedEntity());
+            });
         }
     }
 
@@ -64,11 +48,10 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enableHealFriendlyCharm)
         {
-            for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
-            {
+            CharmUtils.tryApplyEffectToEntities(ctx, entity -> {
                 if(entity instanceof EntityAmbientCreature || entity instanceof EntityAgeable || entity instanceof EntityWaterMob || entity instanceof EntityPlayer)
                     entity.setHealth(entity.getMaxHealth());
-            }
+            });
         }
     }
 
@@ -76,11 +59,10 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enableNoAttackCharm)
         {
-            for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
-            {
+            CharmUtils.tryApplyEffectToEntities(ctx, entity -> {
                 if(entity instanceof EntityLiving)
                     ((EntityLiving)entity).setAttackTarget(null);
-            }
+            });
         }
     }
 
@@ -88,10 +70,9 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enablePotionCharm && ctx.getPotion() != null)
         {
-            for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
-            {
+            CharmUtils.tryApplyEffectToEntities(ctx, entity -> {
                 entity.addPotionEffect(new PotionEffect(ctx.getPotion(), 20 * 11, 0)); //11 seconds
-            }
+            });
         }
     }
 
@@ -99,8 +80,7 @@ public class CharmEffects
     {
         if(MobCharmsConfig.enablePushCharm)
         {
-            for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
-            {
+            CharmUtils.tryApplyEffectToEntities(ctx, entity -> {
                 BlockPos dir = (ctx.getPlayer() == null ? ctx.getPos() : ctx.getPlayer().getPosition()).subtract(entity.getPosition()); //get the direction the entity should be pushed towards
                 //normalize
                 double dist = dir.getDistance(0, 0, 0);
@@ -111,28 +91,8 @@ public class CharmEffects
                 entity.motionX = dist * -Math.signum(dir.getX()) * 0.04F;
                 entity.motionY = dist * -Math.signum(dir.getY()) * 0.04F;
                 entity.motionZ = dist * -Math.signum(dir.getZ()) * 0.04F;
-            }
+            });
         }
-    }
-
-    /**
-     * Returns a list of living entities that will affected when applying the effect. This method also weakens the affected range if the original range would affect too many entities
-     * @param ctx The context of the effect to apply
-     * @param range The range to affect. Starts with the maximum range, then descreases it by one if there are too many mobs in the area. Stops if the range is <= 0
-     * @return The entities that will be affected when applying the effect
-     */
-    public static List<EntityLivingBase> getAffectedEntities(CharmEffectContext ctx, int range)
-    {
-        if(range <= 0 || ctx == null || ctx.getWorld() == null || ctx.getPos() == null)
-            return new ArrayList<>();
-
-        //find all entities in the given range
-        List<EntityLivingBase> entitiesToAffect = ctx.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ctx.getPos()).grow(range));
-
-        if(entitiesToAffect.size() > ctx.getPower()) //if there are too many entities, reduce range and try again
-            entitiesToAffect = getAffectedEntities(ctx, range - 1);
-
-        return entitiesToAffect;
     }
 
     /**

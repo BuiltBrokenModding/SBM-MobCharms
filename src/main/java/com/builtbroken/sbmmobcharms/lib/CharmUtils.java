@@ -1,9 +1,12 @@
 package com.builtbroken.sbmmobcharms.lib;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.builtbroken.sbmmobcharms.MobCharmsConfig;
@@ -83,7 +86,7 @@ public class CharmUtils
 
                     //check if prerequisites are met
                     if(stack.getItem() instanceof ItemCharm && ((ItemCharm)stack.getItem()).getCharmType() == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                        return function.apply(player, CharmEffects.getAffectedEntities(new CharmEffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                        return function.apply(player, getAffectedEntities(new CharmEffectContext(player.world, player.getPosition(), player, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
                 }
             }
         }
@@ -113,7 +116,7 @@ public class CharmUtils
 
                     //check if prerequisites are met
                     if(CharmEffects.CHARM_TILES.get(world).get(pos) == type)
-                        return function.apply(CharmEffects.getAffectedEntities(new CharmEffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange));
+                        return function.apply(getAffectedEntities(new CharmEffectContext(world, pos, null, null, ((TileEntityCharm)world.getTileEntity(pos)).getPower()), MobCharmsConfig.maxCharmRange));
                 }
             }
         }
@@ -144,11 +147,62 @@ public class CharmUtils
 
                     //check if prerequisites are met
                     if(CharmEffects.CHARM_ENTITIES.get(world).get(ei) == type && stack.hasTagCompound() && stack.getTagCompound().hasKey("Power"))
-                        return function.apply(CharmEffects.getAffectedEntities(new CharmEffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
+                        return function.apply(getAffectedEntities(new CharmEffectContext(world, ei.getPosition(), null, null, stack.getTagCompound().getInteger("Power")), MobCharmsConfig.maxCharmRange));
                 }
             }
         }
 
         return defaultReturnValue;
+    }
+
+    /**
+     * Returns a list of living entities that will affected when applying the effect. This method also weakens the affected range if the original range would affect too many entities
+     * @param ctx The context of the effect to apply
+     * @param range The range to affect. Starts with the maximum range, then descreases it by one if there are too many mobs in the area. Stops if the range is <= 0
+     * @return The entities that will be affected when applying the effect
+     */
+    public static List<EntityLivingBase> getAffectedEntities(CharmEffectContext ctx, int range)
+    {
+        if(range <= 0 || ctx == null || ctx.getWorld() == null || ctx.getPos() == null)
+            return new ArrayList<>();
+
+        //find all entities in the given range
+        List<EntityLivingBase> entitiesToAffect = ctx.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ctx.getPos()).grow(range));
+
+        if(entitiesToAffect.size() > ctx.getPower()) //if there are too many entities, reduce range and try again
+            entitiesToAffect = getAffectedEntities(ctx, range - 1);
+
+        return entitiesToAffect;
+    }
+
+    /**
+     * Tries to apply a given effect to entities in a specific area
+     * @param ctx The context in which the effect should be applied
+     * @param effect The effect to apply
+     */
+    public static void tryApplyEffectToEntities(CharmEffectContext ctx, Consumer<EntityLivingBase> effect)
+    {
+        for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
+        {
+            effect.accept(entity);
+        }
+    }
+
+    /**
+     * Tries to apply a given effect to entities in a specific area
+     * @param ctx The context in which the effect should be applied
+     * @param effect The effect to apply
+     */
+    public static void tryApplyEffectToEntitiesWithClosestPlayer(CharmEffectContext ctx, BiConsumer<EntityLivingBase,EntityPlayer> effect)
+    {
+        EntityPlayer closestPlayer = ctx.getPlayer() == null ? CharmUtils.getClosestPlayer(ctx) : ctx.getPlayer();
+
+        if(closestPlayer != null)
+        {
+            for(EntityLivingBase entity : getAffectedEntities(ctx, MobCharmsConfig.maxCharmRange))
+            {
+                effect.accept(entity, closestPlayer);
+            }
+        }
     }
 }
