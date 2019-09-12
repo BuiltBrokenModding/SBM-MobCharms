@@ -42,7 +42,7 @@ public class MobCharmsEventHandler
             EntityLivingBase attacked = event.getEntityLiving();
             Entity attacker = event.getSource().getTrueSource();
             boolean buffedByCharmOnPlayer = CharmUtils.checkPlayersWithCharms(CharmType.BUFF, (player, affected) -> {
-                //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                //if both mobs (attacker and attacked entity) are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
                 if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
                     event.setAmount(event.getAmount() * 1.2F); //more damage
 
@@ -56,7 +56,7 @@ public class MobCharmsEventHandler
                 return;
 
             boolean buffedByCharmTile = CharmUtils.checkCharmTileEntities(CharmType.BUFF, affected -> {
-                //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+                //if both mobs (attacker and attacked entity) are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
                 if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
                     event.setAmount(event.getAmount() * 1.2F); //more damage
 
@@ -69,8 +69,8 @@ public class MobCharmsEventHandler
             if(buffedByCharmTile)
                 return;
 
-            boolean buffedByCharmEntityItem = CharmUtils.checkCharmTileEntities(CharmType.BUFF, affected -> {
-                //if both mobs are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
+            boolean buffedByCharmEntityItem = CharmUtils.checkCharmEntityItems(CharmType.BUFF, affected -> {
+                //if both mobs (attacker and attacked entity) are buffed, the attacked entity will receive 0.96 times the damage it would have received without the buff
                 if(attacker instanceof EntityLivingBase && !(attacker instanceof EntityPlayer) && affected.contains(attacker))
                     event.setAmount(event.getAmount() * 1.2F); //more damage
 
