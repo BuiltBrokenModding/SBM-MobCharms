@@ -195,7 +195,7 @@ public class CharmUtils
      */
     public static void tryApplyEffectToEntitiesWithClosestPlayer(CharmEffectContext ctx, BiConsumer<EntityLivingBase,EntityPlayer> effect)
     {
-        EntityPlayer closestPlayer = ctx.getPlayer() == null ? CharmUtils.getClosestPlayer(ctx) : ctx.getPlayer();
+        EntityPlayer closestPlayer = ctx.getPlayer() == null ? getClosestPlayer(ctx) : ctx.getPlayer();
 
         if(closestPlayer != null)
         {
